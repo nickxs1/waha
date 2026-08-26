@@ -39,6 +39,7 @@ import {
   MessageStarRequest,
   MessageTextQuery,
   MessageTextRequest,
+  MessageStickerRequest,
   MessageVideoRequest,
   MessageVoiceRequest,
   NewMessageIDResponse,
@@ -143,6 +144,18 @@ export class ChattingController {
       request.mentions = await whatsapp.resolveMentionsAll(request.chatId);
     }
     return whatsapp.sendVideo(request);
+  }
+
+  @Post('/sendSticker')
+  @ApiOperation({
+    summary: 'Send a sticker',
+    description:
+      'Send a WebP image as a sticker. Either from an URL or base64 data.',
+  })
+  @CheckPolicies(CanSession(Action.Send, FromBody('session')))
+  async sendSticker(@Body() request: MessageStickerRequest) {
+    const whatsapp = await this.manager.getWorkingSession(request.session);
+    return whatsapp.sendSticker(request);
   }
 
   @Post('/send/link-custom-preview')
