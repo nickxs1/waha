@@ -9,7 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { WAHAValidationPipe } from '@waha/nestjs/pipes/WAHAValidationPipe';
 import {
   GetChatMessagesFilter,
@@ -150,7 +150,32 @@ export class ChattingController {
   @ApiOperation({
     summary: 'Send a sticker',
     description:
-      'Send a WebP image as a sticker. Either from an URL or base64 data.',
+      'Send a WebP image as a sticker. Either from an URL or base64 data. PNG and JPEG images are automatically converted to WebP.',
+  })
+  @ApiBody({
+    type: MessageStickerRequest,
+    examples: {
+      url: {
+        summary: 'From URL',
+        value: {
+          chatId: '11111111111@c.us',
+          file: {
+            url: 'https://github.com/devlikeapro/waha/raw/core/examples/dev.webp',
+          },
+        },
+      },
+      base64png: {
+        summary: 'From base64 PNG (auto-converted to WebP)',
+        value: {
+          chatId: '11111111111@c.us',
+          file: {
+            mimetype: 'image/png',
+            filename: 'sticker.png',
+            data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+          },
+        },
+      },
+    },
   })
   @CheckPolicies(CanSession(Action.Send, FromBody('session')))
   async sendSticker(@Body() request: MessageStickerRequest) {
