@@ -150,7 +150,7 @@ export class ChattingController {
   @ApiOperation({
     summary: 'Send a sticker',
     description:
-      'Send a WebP image as a sticker. Either from an URL or base64 data. PNG and JPEG images are automatically converted to WebP.',
+      'The image will not be converted. It must already be in WebP format. PNG and JPEG are not supported.',
   })
   @ApiBody({
     type: MessageStickerRequest,
