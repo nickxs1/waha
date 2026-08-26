@@ -84,6 +84,7 @@ import {
   MessageReplyRequest,
   MessageStarRequest,
   MessageTextRequest,
+  MessageStickerRequest,
   MessageVideoRequest,
   SendSeenRequest,
   WANumberExistResult,
@@ -1129,6 +1130,17 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
       this.ensureSuffix(request.chatId),
       media,
       options,
+    );
+  }
+
+  @Activity()
+  async sendSticker(request: MessageStickerRequest) {
+    const media = await this.fileToMedia(request.file);
+    const options = this.getMessageOptions(request);
+    return this.whatsapp.sendMessage(
+      this.ensureSuffix(request.chatId),
+      media,
+      { ...options, sendMediaAsSticker: true },
     );
   }
 

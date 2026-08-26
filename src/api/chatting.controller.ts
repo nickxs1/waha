@@ -9,7 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { WAHAValidationPipe } from '@waha/nestjs/pipes/WAHAValidationPipe';
 import {
   GetChatMessagesFilter,
@@ -39,6 +39,7 @@ import {
   MessageStarRequest,
   MessageTextQuery,
   MessageTextRequest,
+  MessageStickerRequest,
   MessageVideoRequest,
   MessageVoiceRequest,
   NewMessageIDResponse,
@@ -143,6 +144,46 @@ export class ChattingController {
       request.mentions = await whatsapp.resolveMentionsAll(request.chatId);
     }
     return whatsapp.sendVideo(request);
+  }
+
+  @Post('/sendSticker')
+  @ApiOperation({
+    summary: 'Send a sticker',
+    description:
+      'Send a WebP image as a sticker. Either from an URL or base64 data. PNG and JPEG images are automatically converted to WebP.',
+  })
+  @ApiBody({
+    type: MessageStickerRequest,
+    examples: {
+      url: {
+        summary: 'From URL',
+        value: {
+          session: 'default',
+          chatId: '11111111111@c.us',
+          reply_to: null,
+          file: {
+            url: 'https://www.gstatic.com/webp/gallery/1.webp',
+          },
+        },
+      },
+      base64webp: {
+        summary: 'From base64 WebP',
+        value: {
+          session: 'default',
+          chatId: '11111111111@c.us',
+          reply_to: null,
+          file: {
+            mimetype: 'image/webp',
+            data: 'your-base64-data-of-webp',
+          },
+        },
+      },
+    },
+  })
+  @CheckPolicies(CanSession(Action.Send, FromBody('session')))
+  async sendSticker(@Body() request: MessageStickerRequest) {
+    const whatsapp = await this.manager.getWorkingSession(request.session);
+    return whatsapp.sendSticker(request);
   }
 
   @Post('/send/link-custom-preview')
