@@ -1,4 +1,3 @@
-import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import pino, { Logger } from 'pino';
@@ -64,23 +63,7 @@ export class LocalAuth implements AuthStrategy {
     };
 
     this.userDataDir = dirPath;
-    this.killOrphanedChrome(dirPath);
     await this.removeSingletonFiles(dirPath);
-  }
-
-  /**
-   * Kill any Chrome/Chromium process still holding this userDataDir.
-   * This happens when a previous session crashed without closing the browser.
-   */
-  private killOrphanedChrome(userDataDir: string) {
-    try {
-      execSync(
-        `pkill -f "user-data-dir=${userDataDir}" 2>/dev/null || true`,
-        { timeout: 5_000 },
-      );
-    } catch (err) {
-      this.logger.warn(err, 'Failed to kill orphaned Chrome process');
-    }
   }
 
   /**
