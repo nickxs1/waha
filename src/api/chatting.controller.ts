@@ -174,7 +174,6 @@ export class ChattingController {
           reply_to: null,
           file: {
             mimetype: 'image/webp',
-            filename: 'sticker.webp',
             data: 'UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoBAAEAAUAmJYgCdAEO/gHOAAA=',
           },
         },
