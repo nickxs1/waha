@@ -4,7 +4,8 @@ services:
     restart: always
     # https://waha.devlike.pro/docs/how-to/engines/#docker-images
     # https://portal.devlike.pro/docker-image
-    image: devlikeapro/waha-plus
+    build: .
+    # image: devlikeapro/waha-plus
     # WAHA Core
     # image: devlikeapro/waha:latest
 
@@ -24,7 +25,7 @@ services:
 
     volumes:
       # Store sessions in the .sessions folder (comment it if you're using MongoDB)
-      - './sessions:/app/.sessions'
+      - './sessions2:/app/.sessions2'
 
       # Save media files
       # https://waha.devlike.pro/docs/how-to/storages/#save-media-files-between-the-container-restarts
