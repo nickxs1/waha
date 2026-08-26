@@ -1,4 +1,3 @@
-import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import pino, { Logger } from 'pino';
@@ -69,17 +68,29 @@ export class LocalAuth implements AuthStrategy {
   }
 
   /**
-   * Kill any Chrome/Chromium process still holding this userDataDir.
-   * This happens when a previous session crashed without closing the browser.
+   * Kill the Chrome/Chromium process still holding this userDataDir.
+   * Chrome writes a SingletonLock symlink containing "hostname-PID".
+   * We read it, extract the PID, and kill only that process.
    */
   private killOrphanedChrome(userDataDir: string) {
+    const lockFile = path.join(userDataDir, 'SingletonLock');
     try {
-      execSync(
-        `pkill -f "user-data-dir=${userDataDir}" 2>/dev/null || true`,
-        { timeout: 5_000 },
-      );
-    } catch (err) {
-      this.logger.warn(err, 'Failed to kill orphaned Chrome process');
+      const target = fs.readlinkSync(lockFile);
+      const parts = target.split('-');
+      const pid = parseInt(parts[parts.length - 1], 10);
+      if (!Number.isFinite(pid) || pid <= 0) {
+        return;
+      }
+      try {
+        process.kill(pid, 'SIGKILL');
+        this.logger.info(`Killed orphaned Chrome process PID ${pid}`);
+      } catch (killErr: any) {
+        if (killErr.code !== 'ESRCH') {
+          this.logger.warn(killErr, `Failed to kill Chrome PID ${pid}`);
+        }
+      }
+    } catch {
+      // No SingletonLock → no orphaned Chrome, nothing to do
     }
   }
 
