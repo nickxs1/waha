@@ -158,7 +158,6 @@ import { SinglePeriodicJobRunner } from '@waha/utils/SinglePeriodicJobRunner';
 import { TmpDir } from '@waha/utils/tmpdir';
 import * as lodash from 'lodash';
 import * as path from 'path';
-import sharp from 'sharp';
 import { Browser, ProtocolError } from 'puppeteer';
 import {
   filter,
@@ -1137,12 +1136,6 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
   @Activity()
   async sendSticker(request: MessageStickerRequest) {
     const media = await this.fileToMedia(request.file);
-    if (media.mimetype !== 'image/webp') {
-      const input = Buffer.from(media.data, 'base64');
-      const webp = await sharp(input).webp().toBuffer();
-      media.data = webp.toString('base64');
-    }
-    media.mimetype = 'image/webp';
     const options = this.getMessageOptions(request);
     return this.whatsapp.sendMessage(
       this.ensureSuffix(request.chatId),

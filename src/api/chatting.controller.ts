@@ -158,20 +158,24 @@ export class ChattingController {
       url: {
         summary: 'From URL',
         value: {
+          session: 'default',
           chatId: '11111111111@c.us',
+          reply_to: null,
           file: {
-            url: 'https://github.com/devlikeapro/waha/raw/core/examples/dev.webp',
+            url: 'https://www.gstatic.com/webp/gallery/1.webp',
           },
         },
       },
-      base64png: {
-        summary: 'From base64 PNG (auto-converted to WebP)',
+      base64webp: {
+        summary: 'From base64 WebP',
         value: {
+          session: 'default',
           chatId: '11111111111@c.us',
+          reply_to: null,
           file: {
-            mimetype: 'image/png',
-            filename: 'sticker.png',
-            data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+            mimetype: 'image/webp',
+            filename: 'sticker.webp',
+            data: 'UklGRlYAAABXRUJQVlA4IEoAAADQAQCdASoBAAEAAUAmJYgCdAEO/gHOAAA=',
           },
         },
       },
