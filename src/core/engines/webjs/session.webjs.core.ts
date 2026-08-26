@@ -827,6 +827,11 @@ export class WhatsappSessionWebJSCore extends WhatsappSession {
   }
 
   async getScreenshot(): Promise<Buffer> {
+    if (!this.whatsapp?.pupPage) {
+      throw new UnprocessableEntityException(
+        'Screenshot is not available: browser page is not ready yet.',
+      );
+    }
     const screenshot = await this.whatsapp.pupPage.screenshot({
       encoding: 'binary',
     });
